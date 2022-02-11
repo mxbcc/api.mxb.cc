@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from "./app.module";
 import { resolve } from 'path';
 import { NestExpressApplication } from "@nestjs/platform-express";
-import * as chalk from "chalk";
+import chalk from "chalk";
 import { initHelper } from "./helpers";
 import { Logger } from "@nestjs/common";
 import { LOGGER } from "@nestcloud/common";
