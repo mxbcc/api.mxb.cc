@@ -1,0 +1,13 @@
+.DS_Store
+.idea/
+dist/
+logs/
+node_modules/
+.env.development
+src/.keystone/
+yarn-error.log
+*.js
+*.d.ts
+!types/keystone.d.ts
+!src/templates/contact-me.template.js
+!src/templates/notification.template.js

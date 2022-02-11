@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "commonjs",
+    "declaration": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": false,
+    "removeComments": false,
+    "noLib": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2017",
+    "sourceMap": false,
+    "allowJs": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "outDir": "src/.keystone",
+    "lib": [
+      "es7"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "./**/*.spec.ts",
+    "src/.keystone",
+    "scripts"
+  ]
+}
