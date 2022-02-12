@@ -1,5 +1,6 @@
 export const MONGO_URI = 'MONGO_URI';
 export const SESSION_STORE = 'SESSION_STORE';
+export const COOKIE_DOMAIN = 'COOKIE_DOMAIN';
 export const PORT = 'PORT';
 export const EXTERNAL_URL = 'EXTERNAL_URL';
 export const REDIS_HOST = 'REDIS_HOST';

@@ -7,7 +7,7 @@ import { AdminUIApp } from "@keystonejs/app-admin-ui";
 import * as expressSession from 'express-session';
 import * as initMongoStore from 'connect-mongo';
 import { ConfigService } from "@nestjs/config";
-import { MONGO_URI, SESSION_STORE } from "./constants/env.constants";
+import { COOKIE_DOMAIN, MONGO_URI, SESSION_STORE } from "./constants/env.constants";
 
 export const initKeystone = (config: ConfigService) => {
     const MongoStore = initMongoStore(expressSession);
@@ -17,7 +17,7 @@ export const initKeystone = (config: ConfigService) => {
         adapter: new MongooseAdapter({ mongoUri: config.get(MONGO_URI) }),
         cookieSecret: 'mxb.cc',
         cookie: {
-            domain: 'mxb.cc',
+            domain: config.get(COOKIE_DOMAIN),
             secure: false,
             maxAge: 1000 * 60 * 60 * 24 * 30,
             sameSite: false,
