@@ -2,6 +2,7 @@ import { Keystone } from "@keystonejs/keystone";
 import { Text } from "@keystonejs/fields";
 import { accessHelper } from "../helpers";
 import { Role } from "../constants/role.enum";
+import { atTracking } from "@keystonejs/list-plugins";
 
 export function initMessageModel(keystone: Keystone): void {
     keystone.createList('Message', {
@@ -11,6 +12,13 @@ export function initMessageModel(keystone: Keystone): void {
             message: { type: Text, isMultiline: true }
         },
         labelField: 'email',
+        plugins: [
+            atTracking({
+                createdAtField: 'createdAt',
+                format: 'YYYY-MM-DD hh:mm',
+                access: true,
+            }),
+        ],
         access: {
             read: accessHelper.access(Role.ADMIN),
             update: accessHelper.access(Role.ADMIN),
