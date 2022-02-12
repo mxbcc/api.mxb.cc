@@ -24,19 +24,6 @@ export class EmailClient {
             transport: 'nodemailer',
         });
 
-        console.log({
-            nodemailerConfig: {
-                host: this.config.get(MAILER_HOST),
-                port: this.config.get(MAILER_PORT),
-                secure: this.config.get(MAILER_SECURE) === 'true',
-                auth: {
-                    user: this.config.get(MAILER_USER),
-                    pass: this.config.get(MAILER_PASS),
-                    name: this.config.get(MAILER_NAME),
-                },
-            }
-        });
-
         await jsxEmailSender(tpl).send(data, {
             nodemailerConfig: {
                 host: this.config.get(MAILER_HOST),
