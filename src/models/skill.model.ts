@@ -4,7 +4,7 @@ import { accessHelper } from "../helpers";
 import { Role } from "../constants/role.enum";
 
 export function initSkillModel(keystone: Keystone): void {
-    keystone.createList('EmailSubscription', {
+    keystone.createList('Skill', {
         fields: {
             tag: { type: Relationship, ref: 'Tag', many: false },
             name: { type: Text },
