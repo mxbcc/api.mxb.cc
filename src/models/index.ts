@@ -13,6 +13,7 @@ import { initBannerImageModel } from "./banner-image.model";
 import { ConfigService } from "@nestjs/config";
 import { OSSAdapterClient } from "../clients/oss-adapter.client";
 import { ALI_ACCESS_KEY, ALI_BUCKET, ALI_REGION, ALI_SECRET_KEY, UPLOAD_FOLDERS } from "../constants/env.constants";
+import { initSkillModel } from "./skill.model";
 
 export function initModels(keystone: Keystone, config: ConfigService) {
     const ossAdapter = new OSSAdapterClient(
@@ -33,4 +34,5 @@ export function initModels(keystone: Keystone, config: ConfigService) {
     initCommentModel(keystone);
     initSubscriptionModel(keystone);
     initBannerImageModel(keystone, ossAdapter);
+    initSkillModel(keystone);
 }
