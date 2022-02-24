@@ -10,7 +10,7 @@ export function initSkillModel(keystone: Keystone): void {
             name: { type: Text },
             type: {
                 type: Select,
-                options: 'Expert, Prefered Stack, Well Understood, Room for Improvement',
+                options: 'EXPERT, PREFERED_STACK, WELL_UNDERSTOOD, ROOM_FOR_IMPROVEMENT',
                 many: true
             },
         },
