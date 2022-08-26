@@ -1,17 +1,17 @@
-import { Injectable, Logger, NotFoundException, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { NeteaseClient } from "../clients";
 import { Interval } from "@nestcloud/schedule";
 import { InjectLogger } from "@nestcloud/logger";
 import { InjectRedis } from "@nestcloud/redis";
 import { Redis } from "ioredis";
-import { NETEASE_COOKIE, NETEASE_SONG_URL, NETEASE_SONGS } from "../constants/redis.constants";
+import { NETEASE_SONG_URL, NETEASE_SONGS } from "../constants/redis.constants";
 import * as shuffle from 'shuffle-array';
 import { ConfigService } from "@nestjs/config";
-import { NETEASE_COUNTRY_CODE, NETEASE_PASSWORD, NETEASE_PHONE, PLAYLIST_ID } from "../constants/env.constants";
+import { PLAYLIST_ID, NETEASE_COOKIE } from "../constants/env.constants";
 
 @Injectable()
-export class NeteaseService implements OnModuleInit {
-    private cookie: string;
+export class NeteaseService {
+    private readonly cookie: string;
 
     constructor(
         private readonly netease: NeteaseClient,
@@ -21,6 +21,7 @@ export class NeteaseService implements OnModuleInit {
         private readonly redis: Redis,
         private readonly config: ConfigService,
     ) {
+        this.cookie = this.config.get(NETEASE_COOKIE);
     }
 
     async getLyric(songId: string) {
@@ -34,8 +35,7 @@ export class NeteaseService implements OnModuleInit {
             return JSON.parse(cache);
         }
 
-        const cookie = await this.redis.get(NETEASE_COOKIE);
-        const { data } = await this.netease.getSongUrl(cookie, songId);
+        const { data } = await this.netease.getSongUrl(this.cookie, songId);
         const { url, size } = data[0] ?? {};
         if (!url) {
             throw new NotFoundException();
@@ -66,50 +66,9 @@ export class NeteaseService implements OnModuleInit {
 
     @Interval(5 * 60 * 1000)
     async refreshSongs() {
-        const cookie = await this.redis.get(NETEASE_COOKIE);
         const playlistId = this.config.get(PLAYLIST_ID);
-        const { playlist: { tracks } } = await this.netease.getPlaylistDetail(cookie, playlistId);
+        const { playlist: { tracks } } = await this.netease.getPlaylistDetail(this.cookie, playlistId);
         await this.redis.set(NETEASE_SONGS, JSON.stringify(tracks), 'EX', 60 * 60);
         return tracks;
-    }
-
-    @Interval(5 * 60 * 1000)
-    async refreshToken() {
-        if (this.cookie) {
-            try {
-                const result = await this.netease.refresh(this.cookie);
-                if (result.code === 200) {
-                    this.logger.log('refresh netease token success');
-                    return;
-                }
-            } catch (e) {
-                this.logger.error(`refresh netease token error`, e);
-            }
-        }
-
-        return this.onModuleInit();
-    }
-
-    async onModuleInit(): Promise<void> {
-        const cookie = await this.redis.get(NETEASE_COOKIE);
-        if (cookie) {
-            try {
-                const result = await this.netease.login(
-                    this.config.get(NETEASE_PHONE),
-                    this.config.get(NETEASE_PASSWORD),
-                    this.config.get(NETEASE_COUNTRY_CODE),
-                );
-                if (result.code === 200) {
-                    this.cookie = result?.cookie;
-
-                    await this.redis.set(NETEASE_COOKIE, result?.cookie);
-                    this.logger.log(`init netease api success`);
-                    return;
-                }
-                this.logger.error(`init netease api error: ${JSON.stringify(result)}`);
-            } catch (e) {
-                this.logger.error(`init netease api error`, e);
-            }
-        }
     }
 }

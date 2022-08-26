@@ -1,12 +1,11 @@
 import { Controller, Get, Headers, InternalServerErrorException, Param, Query, Req, Res } from "@nestjs/common";
-import { MusicService, SingService } from "../services";
+import { MusicService } from "../services";
 import { Response, Request } from 'express';
 
 @Controller('/nest-api/music')
 export class MusicController {
     constructor(
         private readonly musicService: MusicService,
-        private readonly singService: SingService,
     ) {
     }
 
