@@ -3,9 +3,8 @@ import { Checkbox, Select, Text } from "@keystonejs/fields";
 import { Role } from "../constants/role.enum";
 import { accessHelper } from "../helpers";
 
-// id | name                   | platform   | status | url                                                  | version |
 export function initApplicationModel(keystone: Keystone): void {
-    keystone.createList('Banner', {
+    keystone.createList('Application', {
         fields: {
             platform: { type: Select, options: 'darwin, linux, win32' },
             arch: { type: Select, options: 'arm, arm64, ia32, x64, x32' },
