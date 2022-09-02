@@ -8,6 +8,7 @@ export function initApplicationModel(keystone: Keystone): void {
         fields: {
             platform: { type: Select, options: 'darwin, linux, win32' },
             arch: { type: Select, options: 'arm, arm64, ia32, x64, x32' },
+            ext: { type: Text },
             version: { type: Text },
             enable: { type: Checkbox },
             url: { type: Text },
