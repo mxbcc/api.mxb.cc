@@ -4,10 +4,10 @@ import { SingClient } from "../clients";
 import { createHash } from 'crypto';
 import { InjectRedis } from "@nestcloud/redis";
 import { Redis } from 'ioredis';
-import { SING_LOVE_SONGS, SING_SONG_URL, SING_TOKEN, SING_USER_ID } from "../constants/redis.constants";
-import * as shuffle from 'shuffle-array';
+import { SING_TOKEN, SING_USER_ID } from "../constants/redis.constants";
 import { ConfigService } from "@nestjs/config";
 import { SING_PASSWORD, SING_USERNAME } from "../constants/env.constants";
+import { Song } from "../interfaces/song.interface";
 
 @Injectable()
 export class SingService implements OnModuleInit {
@@ -29,10 +29,6 @@ export class SingService implements OnModuleInit {
     }
 
     async getSongUrl(songId: string, kind: string): Promise<{ url: string, size: number }> {
-        let cache = await this.redis.get(`${SING_SONG_URL}:${kind}:${songId}`);
-        if (cache) {
-            return JSON.parse(cache);
-        }
         const { data, success } = await this.singClient.getSongUrl(songId, kind);
         if (!success) {
             throw new NotFoundException();
@@ -42,47 +38,21 @@ export class SingService implements OnModuleInit {
         if (!url) {
             throw new NotFoundException();
         }
-        await this.redis.set(
-            `${SING_SONG_URL}:${kind}:${songId}`,
-            JSON.stringify({ url, size }),
-            'EX',
-            60 * 60 * 24,
-        );
         return { url, size };
     }
 
-    async getSongs() {
-        const cache = await this.redis.get(SING_LOVE_SONGS);
-        let songs: any[] = [];
-        if (cache) {
-            songs = JSON.parse(cache);
-        } else {
-            songs = await this.refreshSongs();
-        }
-        shuffle(songs);
-        return songs;
-    }
-
-    async refreshSongs() {
+    async getSongs(): Promise<Song[]> {
         const userId = await this.redis.get(SING_USER_ID);
         const token = await this.redis.get(SING_TOKEN);
         const { data } = await this.singClient.getLoveSongs(userId, token);
-        const songs = (data ?? []).map(item => ({
-            id: item.ID,
-            name: item.SN,
-            ar: [{
-                id: item?.user?.ID,
-                name: item?.user?.NN,
-            }],
-            al: {
-                id: item?.user?.ID,
-                name: item?.user?.NN,
-                picUrl: item?.user?.I,
-            },
-            kind: item.SK,
+        return (data ?? []).map(item => ({
+            songId: String(item.ID),
+            songName: item.SN,
+            singerId: String(item?.user?.ID),
+            singerName: item?.user?.NN,
+            songPic: item?.user?.I,
+            songKind: item?.SK,
         }));
-        await this.redis.set(SING_LOVE_SONGS, JSON.stringify(songs), 'EX', 60 * 60 * 24);
-        return songs;
     }
 
     async onModuleInit(): Promise<void> {

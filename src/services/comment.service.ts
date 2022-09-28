@@ -14,10 +14,12 @@ import { GET_METADATA } from "../graphql/site-meta.gql";
 @Injectable()
 export class CommentService {
     constructor(
-        @InjectKeystone() private readonly keystone: Keystone,
+        @InjectKeystone()
+        private readonly keystone: Keystone,
         private readonly metadataService: MetadataService,
         private readonly notifyService: NotifyService,
-        @InjectLogger() private readonly logger: Logger,
+        @InjectLogger()
+        private readonly logger: Logger,
         private readonly config: ConfigService,
     ) {
     }
