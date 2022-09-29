@@ -21,5 +21,5 @@ export class Gallery {
     @Field({ type: Url })
     url: string;
     @Field({ type: Checkbox, label: '发布' })
-    public: boolean;
+    publish: boolean;
 }
