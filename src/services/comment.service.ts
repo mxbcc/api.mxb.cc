@@ -3,28 +3,32 @@ import { Comment } from "../interfaces/comment.interface";
 import { createItem } from '@keystonejs/server-side-graphql-client';
 import { GET_COMMENT } from "../graphql/comment.gql";
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
-import { InjectKeystone } from "../decorators/inject-keystone.decorator";
-import { MetadataService } from "./metadata.service";
+import { InjectKeystone } from "../decorators";
 import { NotifyService } from "./notify.service";
 import { InjectLogger } from "@nestcloud/logger";
 import { ConfigService } from "@nestjs/config";
 import { EXTERNAL_URL } from "../constants/env.constants";
-import { GET_METADATA } from "../graphql/site-meta.gql";
+import { GET_SETTING } from "../graphql/setting.gql";
+import { Setting } from "../enums/setting.enum";
+import { SettingService } from "./setting.service";
 
 @Injectable()
 export class CommentService {
     constructor(
-        @InjectKeystone() private readonly keystone: Keystone,
-        private readonly metadataService: MetadataService,
+        @InjectKeystone()
+        private readonly keystone: Keystone,
+        private readonly settingService: SettingService,
         private readonly notifyService: NotifyService,
-        @InjectLogger() private readonly logger: Logger,
+        @InjectLogger()
+        private readonly logger: Logger,
         private readonly config: ConfigService,
     ) {
     }
 
     async isAdmin(name: string, email: string): Promise<boolean> {
-        const metadata = await this.metadataService.getMetadata();
-        return name === metadata.admin_name || email === metadata.admin_email;
+        const adminName = await this.settingService.get(Setting.MXB_ADMIN_NAME);
+        const adminEmail = await this.settingService.get(Setting.MXB_ADMIN_EMAIL);
+        return name === adminName || email === adminEmail;
     }
 
     async commit(comment: Comment) {
@@ -65,7 +69,11 @@ export class CommentService {
             data.belong_to = { connect: { id: res.data.Comment.id } };
         }
 
-        const { id } = await createItem({ keystone: this.keystone, listKey: 'Comment', item: data });
+        const { id } = await createItem({
+            keystone: this.keystone,
+            listKey: 'Comment',
+            item: data
+        });
 
         const externalUrl = this.config.get(EXTERNAL_URL, 'https://mxb.cc');
         if (isSubscribe && replyEmail) {
@@ -77,11 +85,14 @@ export class CommentService {
                 this.logger.error(`Notify to ${replyEmail} ${externalUrl}${comment.page}#${comment.replyTo}error.`, e);
             });
         } else if (!isSubscribe && !replyEmail) {
-            this.keystone.executeGraphQL({ query: GET_METADATA }).then(res => {
-                const meta = res.data.allSiteMetas[0];
+            this.keystone.executeGraphQL({
+                query: GET_SETTING,
+                variables: { key: Setting.MXB_TITLE },
+            }).then(res => {
+                const setting = res.data.allSettings[0];
                 this.notifyService.notifyMe({
                     content: comment.content,
-                    name: meta?.title,
+                    name: setting?.value,
                     url: `${externalUrl}${comment.page}#${id}`
                 }).catch(e => {
                     this.logger.error(`Notify to me ${externalUrl}${comment.page}#${comment.replyTo}error.`, e);

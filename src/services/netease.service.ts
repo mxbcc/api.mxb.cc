@@ -6,22 +6,19 @@ import { InjectRedis } from "@nestcloud/redis";
 import { Redis } from "ioredis";
 import { NETEASE_SONG_URL, NETEASE_SONGS } from "../constants/redis.constants";
 import * as shuffle from 'shuffle-array';
-import { ConfigService } from "@nestjs/config";
-import { PLAYLIST_ID, NETEASE_COOKIE } from "../constants/env.constants";
+import { SettingService } from "./setting.service";
+import { Setting } from "../enums/setting.enum";
 
 @Injectable()
 export class NeteaseService {
-    private readonly cookie: string;
-
     constructor(
         private readonly netease: NeteaseClient,
         @InjectLogger()
         private readonly logger: Logger,
         @InjectRedis()
         private readonly redis: Redis,
-        private readonly config: ConfigService,
+        private readonly settingService: SettingService,
     ) {
-        this.cookie = this.config.get(NETEASE_COOKIE);
     }
 
     async getLyric(songId: string) {
@@ -35,7 +32,8 @@ export class NeteaseService {
             return JSON.parse(cache);
         }
 
-        const { data } = await this.netease.getSongUrl(this.cookie, songId);
+        const cookie = await this.settingService.get(Setting.MXB_NETEASE_COOKIE);
+        const { data } = await this.netease.getSongUrl(cookie, songId);
         const { url, size } = data[0] ?? {};
         if (!url) {
             throw new NotFoundException();
@@ -66,8 +64,9 @@ export class NeteaseService {
 
     @Interval(5 * 60 * 1000)
     async refreshSongs() {
-        const playlistId = this.config.get(PLAYLIST_ID);
-        const { playlist: { tracks } } = await this.netease.getPlaylistDetail(this.cookie, playlistId);
+        const playlistId = await this.settingService.get(Setting.MXB_NETEASE_PLAYLIST_ID);
+        const cookie = await this.settingService.get(Setting.MXB_NETEASE_COOKIE);
+        const { playlist: { tracks } } = await this.netease.getPlaylistDetail(cookie, playlistId);
         await this.redis.set(NETEASE_SONGS, JSON.stringify(tracks), 'EX', 60 * 60);
         return tracks;
     }

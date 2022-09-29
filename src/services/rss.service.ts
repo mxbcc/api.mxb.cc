@@ -1,35 +1,39 @@
 import { Injectable } from "@nestjs/common";
 import { Keystone } from "@keystonejs/keystone";
 import { InjectKeystone } from "../decorators";
-import { MetadataService } from "./metadata.service";
 import * as RSS from 'rss';
 import { GET_POSTS } from "../graphql/post.gql";
 import { EXTERNAL_URL } from "../constants/env.constants";
 import { ConfigService } from "@nestjs/config";
 import { Post } from "../models";
+import { SettingService } from "./setting.service";
+import { Setting } from "../enums/setting.enum";
 
 @Injectable()
 export class RssService {
     constructor(
         @InjectKeystone()
         private readonly keystone: Keystone,
-        private readonly metaService: MetadataService,
+        private readonly settingService: SettingService,
         private readonly config: ConfigService,
     ) {
     }
 
     async getRSS() {
-        const meta = await this.metaService.getMetadata();
+        const title = await this.settingService.get(Setting.MXB_TITLE);
+        const description = await this.settingService.get(Setting.MXB_DESCRIPTION);
+        const avatar = await this.settingService.get(Setting.MXB_AVATAR);
+        const adminEmail = await this.settingService.get(Setting.MXB_ADMIN_EMAIL);
         const externalUrl = this.config.get(EXTERNAL_URL, 'https://mxb.cc');
         const feed = new RSS({
-            title: meta.title,
-            description: meta.description,
+            title,
+            description,
             feed_url: `${externalUrl}/rss.xml`,
             site_url: externalUrl,
-            image_url: meta?.avatar?.publicUrl,
-            managingEditor: meta.admin_email,
-            webMaster: meta.admin_email,
-            copyright: `${new Date().getFullYear()} ${meta.title}`,
+            image_url: avatar,
+            managingEditor: adminEmail,
+            webMaster: adminEmail,
+            copyright: `${new Date().getFullYear()} ${title}`,
             language: 'zh',
             ttl: '60',
         });
@@ -39,7 +43,7 @@ export class RssService {
             title: post.title,
             description: post.description,
             url: `${externalUrl}/posts/${post.key}`,
-            author: meta.title,
+            author: title,
             date: post.createdAt,
         }));
 

@@ -3,11 +3,11 @@ import { createItems } from '@keystonejs/server-side-graphql-client';
 import { ContactMessage } from "../interfaces/contact-message.interface";
 import { NotificationMessage } from "../interfaces/notification-message.interface";
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
-import { MetadataService } from "./metadata.service";
-import { InjectKeystone } from "../decorators/inject-keystone.decorator";
+import { InjectKeystone } from "../decorators";
 import { EmailClient } from "../clients";
-import { GET_METADATA } from "../graphql/site-meta.gql";
 import { InjectLogger } from "@nestcloud/logger";
+import { SettingService } from "./setting.service";
+import { Setting } from "../enums/setting.enum";
 
 const NOTIFICATION_EMAIL_TITLE = '[Notification] You have an unread reply on mxb.cc';
 const CONTACT_ME_EMAIL_TITLE = '[Notification] Someone contact you on mxb.cc';
@@ -15,7 +15,7 @@ const CONTACT_ME_EMAIL_TITLE = '[Notification] Someone contact you on mxb.cc';
 @Injectable()
 export class NotifyService {
     constructor(
-        private readonly metadataService: MetadataService,
+        private readonly settingService: SettingService,
         @InjectKeystone()
         private readonly keystone: Keystone,
         private readonly email: EmailClient,
@@ -30,15 +30,16 @@ export class NotifyService {
             listKey: 'Message',
             items: [{ data }],
         });
-        const meta = await this.metadataService.getMetadata();
-        if (!meta || !meta.admin_email) {
+        const adminEmail = await this.settingService.get(Setting.MXB_ADMIN_EMAIL);
+        const title = await this.settingService.get(Setting.MXB_TITLE);
+        if (!adminEmail) {
             throw new BadRequestException('Send message error, Please contact the administrator');
         }
         this.email.send<any>(
             'contact-me.template.js',
-            meta.admin_email,
+            adminEmail,
             CONTACT_ME_EMAIL_TITLE,
-            { ...data, title: meta?.title },
+            { ...data, title },
         ).catch(e => {
             this.logger.error(`send contact me email error: ${JSON.stringify(data)}.`, e);
         });
@@ -49,10 +50,10 @@ export class NotifyService {
     }
 
     public async notifyMe(data: NotificationMessage) {
-        const meta = await this.metadataService.getMetadata();
-        if (!meta || !meta.admin_email) {
+        const adminEmail = await this.settingService.get(Setting.MXB_ADMIN_EMAIL);
+        if (!adminEmail) {
             throw new BadRequestException('Send message error, Please contact the administrator');
         }
-        return this.email.send<NotificationMessage>('notification.template.js', meta.admin_email, NOTIFICATION_EMAIL_TITLE, data);
+        return this.email.send<NotificationMessage>('notification.template.js', adminEmail, NOTIFICATION_EMAIL_TITLE, data);
     }
 }

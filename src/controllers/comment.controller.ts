@@ -23,7 +23,7 @@ export class CommentController {
         if (!isLogin) {
             const isAdmin = await this.commentService.isAdmin(comment.name, comment.email);
             if (isAdmin) {
-                throw new ForbiddenException('Cannot use the admin account publish comment');
+                throw new ForbiddenException('Cannot use the admin account commit comment');
             }
         }
 

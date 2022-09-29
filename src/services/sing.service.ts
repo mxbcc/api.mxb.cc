@@ -1,16 +1,19 @@
-import { Injectable, Logger, NotFoundException, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectLogger } from "@nestcloud/logger";
 import { SingClient } from "../clients";
 import { createHash } from 'crypto';
 import { InjectRedis } from "@nestcloud/redis";
 import { Redis } from 'ioredis';
-import { SING_LOVE_SONGS, SING_SONG_URL, SING_TOKEN, SING_USER_ID } from "../constants/redis.constants";
+import {
+    SING_LOVE_SONGS,
+    SING_SONG_URL,
+} from "../constants/redis.constants";
 import * as shuffle from 'shuffle-array';
-import { ConfigService } from "@nestjs/config";
-import { SING_PASSWORD, SING_USERNAME } from "../constants/env.constants";
+import { SettingService } from "./setting.service";
+import { Setting } from "../enums/setting.enum";
 
 @Injectable()
-export class SingService implements OnModuleInit {
+export class SingService {
     private readonly SIGN_KEY = '5SING_KUGOU';
 
     constructor(
@@ -19,7 +22,7 @@ export class SingService implements OnModuleInit {
         private readonly logger: Logger,
         @InjectRedis()
         private readonly redis: Redis,
-        private readonly config: ConfigService,
+        private readonly settingService: SettingService,
     ) {
     }
 
@@ -64,8 +67,8 @@ export class SingService implements OnModuleInit {
     }
 
     async refreshSongs() {
-        const userId = await this.redis.get(SING_USER_ID);
-        const token = await this.redis.get(SING_TOKEN);
+        const userId = await this.settingService.get(Setting.MXB_5SING_USERID);
+        const token = await this.settingService.get(Setting.MXB_5SING_TOKEN);
         const { data } = await this.singClient.getLoveSongs(userId, token);
         const songs = (data ?? []).map(item => ({
             id: item.ID,
@@ -85,25 +88,23 @@ export class SingService implements OnModuleInit {
         return songs;
     }
 
-    async onModuleInit(): Promise<void> {
+    async getToken() {
         const md5 = createHash('md5');
-        const username = this.config.get(SING_USERNAME);
-        const password = this.config.get(SING_PASSWORD);
+        const username = await this.settingService.get(Setting.MXB_5SING_USERNAME);
+        const password = await this.settingService.get(Setting.MXB_5SING_PASSWORD);
         const sign = md5.update(`${username}${this.SIGN_KEY}${password}`).digest('hex');
 
-        const token = await this.redis.get(SING_TOKEN);
-        if (!token) {
-            try {
-                const { data, code, msg } = await this.singClient.login(username, password, sign);
-                if (code !== 0) {
-                    this.logger.error(`init 5sing api error: ${JSON.stringify(msg)}`);
-                    return;
-                }
-                await this.redis.set(SING_USER_ID, data.userid);
-                await this.redis.set(SING_TOKEN, data.sign);
-            } catch (e) {
-                this.logger.error(`init 5sing api error`, e);
+        try {
+            const { data, code, msg } = await this.singClient.login(username, password, sign);
+            if (code !== 0) {
+                this.logger.error(`get 5sing token error: ${JSON.stringify(msg)}`);
+                return;
             }
+
+            return { userId: data.userid, token: data.sign };
+        } catch (e) {
+            this.logger.error(`get 5sing token error`, e);
+            throw e;
         }
     }
 }
