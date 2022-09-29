@@ -16,7 +16,8 @@ const CONTACT_ME_EMAIL_TITLE = '[Notification] Someone contact you on mxb.cc';
 export class NotifyService {
     constructor(
         private readonly metadataService: MetadataService,
-        @InjectKeystone() private readonly keystone: Keystone,
+        @InjectKeystone()
+        private readonly keystone: Keystone,
         private readonly email: EmailClient,
         @InjectLogger()
         private readonly logger: Logger,

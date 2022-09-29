@@ -12,7 +12,6 @@ export class RssController {
     @Get()
     async get(@Res() res: Response) {
         const rss = await this.rssService.getRSS();
-        console.log(rss);
         res.header('Content-Type', 'text/xml');
         res.send(rss);
     }

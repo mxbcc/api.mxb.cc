@@ -1,30 +1,27 @@
-import { Keystone } from "@keystonejs/keystone";
 import { Text } from "@keystonejs/fields";
-import { accessHelper } from "../helpers";
-import { Role } from "../constants/role.enum";
 import { atTracking } from "@keystonejs/list-plugins";
+import { Access, Authorization, Field, Label, Model, UsePlugins } from "../decorators";
+import { AccessType, Role } from "../enums";
 
-export function initMessageModel(keystone: Keystone): void {
-    keystone.createList('Message', {
-        fields: {
-            name: { type: Text },
-            email: { type: Text },
-            message: { type: Text, isMultiline: true }
-        },
-        labelField: 'email',
-        plugins: [
-            atTracking({
-                createdAtField: 'createdAt',
-                format: 'YYYY-MM-DD hh:mm',
-                access: true,
-            }),
-        ],
-        access: {
-            read: accessHelper.access(Role.ADMIN),
-            update: accessHelper.access(Role.ADMIN),
-            create: accessHelper.access(Role.ADMIN),
-            delete: accessHelper.access(Role.ADMIN),
-            auth: true,
-        },
-    } as any);
+@Model()
+@Access(AccessType.READ, Role.ADMIN)
+@Access(AccessType.UPDATE, Role.ADMIN)
+@Access(AccessType.DELETE, Role.ADMIN)
+@Access(AccessType.CREATE, Role.ADMIN)
+@Authorization()
+@UsePlugins(
+    atTracking({
+        createdAtField: 'createdAt',
+        format: 'YYYY-MM-DD hh:mm',
+        access: true,
+    })
+)
+export class Message {
+    @Field({ type: Text })
+    name: string;
+    @Field({ type: Text })
+    @Label()
+    email: string;
+    @Field({ type: Text, isMultiline: true } as any)
+    message: string;
 }

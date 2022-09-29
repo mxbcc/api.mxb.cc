@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { Keystone } from "@keystonejs/keystone";
-import { InjectKeystone } from "../decorators/inject-keystone.decorator";
+import { InjectKeystone } from "../decorators";
 import { MetadataService } from "./metadata.service";
 import * as RSS from 'rss';
 import { GET_POSTS } from "../graphql/post.gql";
-import { Post } from "../interfaces/post.interface";
 import { EXTERNAL_URL } from "../constants/env.constants";
 import { ConfigService } from "@nestjs/config";
+import { Post } from "../models";
 
 @Injectable()
 export class RssService {

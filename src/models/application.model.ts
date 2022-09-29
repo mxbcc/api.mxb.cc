@@ -1,24 +1,21 @@
-import { Keystone } from "@keystonejs/keystone";
 import { Checkbox, Select, Text } from "@keystonejs/fields";
-import { Role } from "../constants/role.enum";
-import { accessHelper } from "../helpers";
+import { Access, Field, Model } from "../decorators";
+import { AccessType, Role } from "../enums";
 
-export function initApplicationModel(keystone: Keystone): void {
-    keystone.createList('Application', {
-        fields: {
-            platform: { type: Select, options: 'darwin, linux, win32' },
-            arch: { type: Select, options: 'arm, arm64, ia32, x64, x32' },
-            ext: { type: Text },
-            version: { type: Text },
-            enable: { type: Checkbox },
-            url: { type: Text },
-        },
-        access: {
-            read: accessHelper.access(Role.ADMIN, Role.ANONYMOUS),
-            update: accessHelper.access(Role.ADMIN),
-            create: accessHelper.access(Role.ADMIN),
-            delete: accessHelper.access(Role.ADMIN),
-            auth: false,
-        },
-    });
+@Model()
+@Access(AccessType.READ, Role.ADMIN, Role.ANONYMOUS)
+@Access(AccessType.UPDATE, Role.ADMIN)
+@Access(AccessType.DELETE, Role.ADMIN)
+@Access(AccessType.CREATE, Role.ADMIN)
+export class Application {
+    @Field({ type: Select, options: 'darwin, linux, win32' })
+    platform: string;
+    @Field({ type: Select, options: 'arm, arm64, ia32, x64, x32' })
+    arch: string;
+    @Field({ type: Text })
+    ext: string;
+    @Field({ type: Checkbox })
+    enable: boolean;
+    @Field({ type: Text })
+    url: string;
 }

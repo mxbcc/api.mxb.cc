@@ -1,4 +1,4 @@
-import { Role } from "../constants/role.enum";
+import { Role } from "../enums";
 
 export class AccessHelper {
     access(...roles: Role[]) {

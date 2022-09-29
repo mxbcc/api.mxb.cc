@@ -1,25 +1,22 @@
-import { Keystone } from "@keystonejs/keystone";
 import { Relationship, Select, Text } from "@keystonejs/fields";
-import { accessHelper } from "../helpers";
-import { Role } from "../constants/role.enum";
+import { Access, Field, Model } from "../decorators";
+import { AccessType, Role } from "../enums";
+import { Tag } from "./tag.model";
 
-export function initSkillModel(keystone: Keystone): void {
-    keystone.createList('Skill', {
-        fields: {
-            tag: { type: Relationship, ref: 'Tag', many: false },
-            name: { type: Text },
-            type: {
-                type: Select,
-                options: 'EXPERT, PREFERED_STACK, WELL_UNDERSTOOD, ROOM_FOR_IMPROVEMENT',
-                many: true
-            },
-        },
-        access: {
-            read: accessHelper.access(Role.ADMIN, Role.ANONYMOUS),
-            update: accessHelper.access(Role.ADMIN),
-            create: accessHelper.access(Role.ADMIN),
-            delete: accessHelper.access(Role.ADMIN),
-            auth: false,
-        },
-    } as any);
+@Model()
+@Access(AccessType.READ, Role.ADMIN, Role.ANONYMOUS)
+@Access(AccessType.UPDATE, Role.ADMIN)
+@Access(AccessType.DELETE, Role.ADMIN)
+@Access(AccessType.CREATE, Role.ADMIN)
+export class Skill {
+    @Field({ type: Relationship, ref: 'Tag', many: false })
+    tag: Tag;
+    @Field({ type: Text })
+    name: string;
+    @Field({
+        type: Select,
+        options: 'EXPERT, PREFERED_STACK, WELL_UNDERSTOOD, ROOM_FOR_IMPROVEMENT',
+        many: true
+    })
+    type: string[];
 }

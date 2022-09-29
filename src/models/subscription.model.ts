@@ -1,19 +1,14 @@
-import { Keystone } from "@keystonejs/keystone";
 import { Text } from "@keystonejs/fields";
-import { accessHelper } from "../helpers";
-import { Role } from "../constants/role.enum";
+import { Access, Authorization, Field, Model } from "../decorators";
+import { AccessType, Role } from "../enums";
 
-export function initSubscriptionModel(keystone: Keystone): void {
-    keystone.createList('EmailSubscription', {
-        fields: {
-            email: { type: Text },
-        },
-        access: {
-            read: accessHelper.access(Role.ADMIN),
-            update: accessHelper.access(Role.ADMIN),
-            create: accessHelper.access(Role.ADMIN),
-            delete: accessHelper.access(Role.ADMIN),
-            auth: true,
-        },
-    } as any);
+@Model('EmailSubscription')
+@Access(AccessType.READ, Role.ADMIN)
+@Access(AccessType.UPDATE, Role.ADMIN)
+@Access(AccessType.DELETE, Role.ADMIN)
+@Access(AccessType.CREATE, Role.ADMIN)
+@Authorization()
+export class Subscription {
+    @Field({ type: Text })
+    email: string;
 }

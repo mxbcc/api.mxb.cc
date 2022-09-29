@@ -5,7 +5,8 @@ import { createItem } from "@keystonejs/server-side-graphql-client";
 @Injectable()
 export class SubscriptionService {
     constructor(
-        @InjectKeystone() private readonly keystone,
+        @InjectKeystone()
+        private readonly keystone,
     ) {
     }
 
