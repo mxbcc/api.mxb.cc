@@ -19,7 +19,10 @@ export class Link {
     avatar: any;
     @Field({ type: Relationship, ref: 'Tag', many: true })
     tags: Tag[];
-    @Field({ type: Select, options: 'global, inner' })
+    @Field({
+        type: Select,
+        options: [{ label: '页面底部', value: 'global' }, { label: '单独页面', value: 'inner' }]
+    })
     type: string;
     @Field({ type: Checkbox })
     enable: boolean;

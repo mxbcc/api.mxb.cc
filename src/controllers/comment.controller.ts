@@ -1,11 +1,11 @@
 import { BadRequestException, Body, Controller, ForbiddenException, Post, Req } from "@nestjs/common";
 import { Request } from 'express';
-import { Comment } from "../interfaces/comment.interface";
+import { Comment } from "../interfaces";
 import { CommentService } from "../services";
-import { InjectKeystone } from "../decorators/inject-keystone.decorator";
+import { InjectKeystone } from "../decorators";
 import { Keystone } from "@keystonejs/keystone";
 
-@Controller('/nest-api/comments')
+@Controller('/apis/comments')
 export class CommentController {
     constructor(
         @InjectKeystone() private readonly keystone: Keystone,

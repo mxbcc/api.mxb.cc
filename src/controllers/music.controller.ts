@@ -2,7 +2,7 @@ import { Controller, Get, Headers, InternalServerErrorException, Param, Query, R
 import { MusicService } from "../services";
 import { Response, Request } from 'express';
 
-@Controller('/nest-api/music')
+@Controller('/apis/music')
 export class MusicController {
     constructor(
         private readonly musicService: MusicService,

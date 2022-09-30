@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
 import { SubscriptionService } from "../services";
 
-@Controller('/nest-api/subscriptions')
+@Controller('/apis/subscriptions')
 export class SubscriptionController {
     constructor(
         private readonly subscriptionService: SubscriptionService,

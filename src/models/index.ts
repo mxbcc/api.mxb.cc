@@ -11,3 +11,7 @@ export * from './tag.model';
 export * from './user.model';
 export * from './site-meta.model';
 export * from './setting.model';
+export * from './resource.model';
+export * from './resource-category.model';
+export * from './resource-image.model';
+export * from './resource-pkg.model';

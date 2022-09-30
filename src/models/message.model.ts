@@ -24,4 +24,5 @@ export class Message {
     email: string;
     @Field({ type: Text, isMultiline: true } as any)
     message: string;
+    createdAt: string;
 }
