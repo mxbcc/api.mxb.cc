@@ -1,4 +1,4 @@
-import { Access, Field, Model } from "../decorators";
+import { Access, Field, Label, Model } from "../decorators";
 import { AccessType, Role } from "../enums";
 import { Text } from "@keystonejs/fields";
 
@@ -9,6 +9,7 @@ import { Text } from "@keystonejs/fields";
 @Access(AccessType.CREATE, Role.ADMIN)
 export class Setting {
     @Field({ type: Text, isUnique: true })
+    @Label()
     key: string;
     @Field({ type: Text })
     type: string;
