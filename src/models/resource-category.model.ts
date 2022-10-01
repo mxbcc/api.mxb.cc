@@ -9,6 +9,7 @@ import { ResourceCategoryType } from "../enums/resource-category-type.enum";
 @Access(AccessType.DELETE, Role.ADMIN)
 @Access(AccessType.CREATE, Role.ADMIN)
 export class ResourceCategory {
+    id: string;
     @Field({ type: Text })
     name: string;
     @Field({

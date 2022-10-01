@@ -1,7 +1,7 @@
 import { Access, Field, Model, UsePlugins } from "../decorators";
 import { AccessType, ResourceLanguage, ResourcePlatform, ResourceType, Role } from "../enums";
 import { atTracking } from "@keystonejs/list-plugins";
-import { Checkbox, Integer, Relationship, Select, Text } from "@keystonejs/fields";
+import { Checkbox, File, Integer, Relationship, Select, Text } from "@keystonejs/fields";
 import { Wysiwyg } from "@keystonejs/fields-wysiwyg-tinymce";
 import { ResourceImage } from "./resource-image.model";
 import { ResourcePkg } from "./resource-pkg.model";
@@ -20,12 +20,15 @@ import { ResourceCategory } from "./resource-category.model";
     })
 )
 export class Resource {
+    id: string;
     @Field({ type: Text })
     name: string;
     @Field({ type: Text })
     description: string;
     @Field({ type: Wysiwyg })
     content: string;
+    @Field({ type: File })
+    icon: File;
     @Field({
         type: Select,
         dataType: 'string',
@@ -58,8 +61,6 @@ export class Resource {
         ],
     } as any)
     type: ResourceType;
-    @Field({ type: Checkbox })
-    enable: boolean;
     @Field({ type: Relationship, ref: 'ResourceImage', many: true })
     images: ResourceImage[];
     @Field({ type: Relationship, ref: 'ResourcePkg', many: true })
@@ -70,5 +71,9 @@ export class Resource {
     downloads: number;
     @Field({ type: Integer })
     likes: number;
+    @Field({ type: Checkbox })
+    recommend: boolean;
+    @Field({ type: Checkbox })
+    enable: boolean;
     createdAt: string;
 }
