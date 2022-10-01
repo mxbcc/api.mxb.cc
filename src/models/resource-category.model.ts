@@ -14,7 +14,7 @@ export class ResourceCategory {
     name: string;
     @Field({
         type: Select,
-        options: [{ label: '应用', value: 'soft' }, { label: 'PDF', value: 'pdf' }]
+        options: [{ label: '应用', value: 'soft' }, { label: 'PDF', value: 'pdf' }, { label: '其他', value: 'other' }]
     })
     type: ResourceCategoryType;
 }

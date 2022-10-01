@@ -6,6 +6,7 @@ import { Wysiwyg } from "@keystonejs/fields-wysiwyg-tinymce";
 import { ResourceImage } from "./resource-image.model";
 import { ResourcePkg } from "./resource-pkg.model";
 import { ResourceCategory } from "./resource-category.model";
+import { ResourceCategoryType } from "../enums/resource-category-type.enum";
 
 @Model()
 @Access(AccessType.READ, Role.ADMIN, Role.ANONYMOUS)
@@ -61,6 +62,11 @@ export class Resource {
         ],
     } as any)
     type: ResourceType;
+    @Field({
+        type: Select,
+        options: [{ label: '应用', value: 'soft' }, { label: 'PDF', value: 'pdf' }, { label: '其他', value: 'other' }]
+    })
+    categoryType: ResourceCategoryType;
     @Field({ type: Relationship, ref: 'ResourceImage', many: true })
     images: ResourceImage[];
     @Field({ type: Relationship, ref: 'ResourcePkg', many: true })
