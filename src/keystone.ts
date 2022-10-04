@@ -70,7 +70,7 @@ export const initKeystone = (config: ConfigService) => {
         });
 
         const access = { auth };
-        metaAccesses.forEach(({ type, roles }) => access[type] = accessHelper.access(...roles));
+        metaAccesses?.forEach(({ type, roles }) => access[type] = accessHelper.access(...roles));
 
         keystone.createList(typeof modelName === 'string' ? modelName : model.name, {
             fields,

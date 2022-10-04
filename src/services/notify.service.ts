@@ -1,7 +1,6 @@
 import { Keystone } from "@keystonejs/keystone";
 import { createItems } from '@keystonejs/server-side-graphql-client';
-import { ContactMessage } from "../interfaces/contact-message.interface";
-import { NotificationMessage } from "../interfaces/notification-message.interface";
+import { ContactMessage, NotificationMessage } from "../interfaces";
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { InjectKeystone } from "../decorators";
 import { EmailClient } from "../clients";
