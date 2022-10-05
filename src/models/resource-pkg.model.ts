@@ -19,4 +19,6 @@ export class ResourcePkg {
     version: string;
     @Field({ type: Integer })
     size: number;
+    @Field({ type: Text })
+    system: string;
 }
