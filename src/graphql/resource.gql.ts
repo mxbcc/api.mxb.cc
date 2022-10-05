@@ -1,8 +1,16 @@
 import { gql } from 'apollo-server-express';
 
-export const LIKE_RESOURCE = gql`
+export const INCR_LIKES = gql`
   mutation updateResource($id: ID!, $likes: Int!) {
     updateResource(id: $id, data: {likes: $likes}) {
+       id,
+    }
+  }
+`;
+
+export const INCR_DOWNLOADS = gql`
+  mutation updateResource($id: ID!, $downloads: Int!) {
+    updateResource(id: $id, data: {downloads: $downloads}) {
        id,
     }
   }
