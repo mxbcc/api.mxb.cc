@@ -1,5 +1,5 @@
 import { Access, Field, Model, UsePlugins } from "../decorators";
-import { AccessType, Role } from "../enums";
+import { AccessType, ResourceLanguage, Role } from "../enums";
 import { Select, Text, Url, Integer } from "@keystonejs/fields";
 import { atTracking } from "@keystonejs/list-plugins";
 
@@ -29,5 +29,15 @@ export class ResourcePkg {
     size: number;
     @Field({ type: Text })
     system: string;
+    @Field({
+        type: Select,
+        dataType: 'string',
+        options: [
+            { label: '中文', value: 'zh-cn' },
+            { label: '英文', value: 'en-us' },
+            { label: '其他', value: 'other' },
+        ],
+    } as any)
+    language: ResourceLanguage;
     createdAt: string;
 }
