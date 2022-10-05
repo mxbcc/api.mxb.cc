@@ -32,24 +32,27 @@ export class ResourceService {
         }
     }
 
-    async getPackage(id: string) {
+    async getPackage(resourceId: string, pkgId: string) {
         try {
-            const { data } = await this.keystone.executeGraphQL({ query: GET_PKG, variables: { id } });
+            const { data } = await this.keystone.executeGraphQL({ query: GET_PKG, variables: { id: pkgId } });
             const url = data.ResourcePkg.url;
             if (!url) {
                 throw new Error('ths url is empty');
             }
 
-            const downloads = await this.redis.incr(`${RESOURCE_DOWNLOADS}_${id}`);
+            const downloads = await this.redis.incr(`${RESOURCE_DOWNLOADS}_${pkgId}`);
             try {
-                await this.keystone.executeGraphQL({ query: INCR_DOWNLOADS, variables: { id, downloads } });
+                await this.keystone.executeGraphQL({
+                    query: INCR_DOWNLOADS,
+                    variables: { id: resourceId, downloads },
+                });
             } catch (e) {
                 throw new BadRequestException(e.message);
             }
 
             return url;
         } catch (e) {
-            this.logger.error(`get resource package error by id ${id}`, e);
+            this.logger.error(`get resource package error by id ${resourceId}-${pkgId}`, e);
             throw new BadRequestException('获取资源下载地址失败，请稍候重试');
         }
     }
