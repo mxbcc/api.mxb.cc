@@ -1,5 +1,4 @@
 import { Checkbox, File, Relationship, Text, Url } from "@keystonejs/fields";
-import { Wysiwyg } from "@keystonejs/fields-wysiwyg-tinymce";
 import { Markdown } from '@keystonejs/fields-markdown';
 import { atTracking } from "@keystonejs/list-plugins";
 import { Access, Field, Label, Model, UsePlugins } from "../decorators";
@@ -38,8 +37,6 @@ export class Post {
     cover: { publicUrl: string }
     @Field({ type: Markdown })
     content: string;
-    @Field({ type: Wysiwyg })
-    html_content: string;
     @Field({ type: Checkbox, label: '发布' })
     publish: boolean;
     @Field({ type: Checkbox, label: '置顶' })
