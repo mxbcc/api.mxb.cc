@@ -8,23 +8,12 @@ export const REDIS_PORT = 'REDIS_PORT';
 export const REDIS_PASSWORD = 'REDIS_PASSWORD';
 export const REDIS_DB = 'REDIS_DB';
 
-export const PLAYLIST_ID = 'PLAYLIST_ID';
-export const NETEASE_PHONE = 'NETEASE_PHONE';
-export const NETEASE_PASSWORD = 'NETEASE_PASSWORD';
-export const NETEASE_COUNTRY_CODE = 'NETEASE_COUNTRY_CODE';
-export const NETEASE_COOKIE = 'NETEASE_COOKIE';
-export const SING_USERNAME = 'SING_USERNAME';
-export const SING_PASSWORD = 'SING_PASSWORD';
-
-export const MAILER_HOST = 'MAILER_HOST';
-export const MAILER_PORT = 'MAILER_PORT';
-export const MAILER_SECURE = 'MAILER_SECURE';
-export const MAILER_USER = 'MAILER_USER';
-export const MAILER_PASS = 'MAILER_PASS';
-export const MAILER_NAME = 'MAILER_NAME';
-
 export const ALI_ACCESS_KEY = 'ALI_ACCESS_KEY';
 export const ALI_SECRET_KEY = 'ALI_SECRET_KEY';
 export const ALI_REGION = 'ALI_REGION';
 export const ALI_BUCKET = 'ALI_BUCKET';
 export const UPLOAD_FOLDERS = 'UPLOAD_FOLDERS';
+
+export const ES_URL = 'ES_URL';
+export const ES_USER = 'ES_USER';
+export const ES_PASS = 'ES_PASS';

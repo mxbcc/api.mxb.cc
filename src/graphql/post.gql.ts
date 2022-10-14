@@ -18,7 +18,6 @@ export const POST_DATA = gql`
       description
     }
     content,
-    html_content,
     publish,
     top,
     source,

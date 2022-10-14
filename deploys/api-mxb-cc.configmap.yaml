@@ -28,5 +28,5 @@ data:
     CAPTCHA_SECRET_KEY=
 kind: ConfigMap
 metadata:
-  name: mxb-server-configmap
+  name: api-mxb-cc-configmap
   namespace: default

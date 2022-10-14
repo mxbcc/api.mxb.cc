@@ -5,19 +5,29 @@ import { Injectable } from "@nestjs/common";
 import * as request from "request";
 import * as Stream from "stream";
 import { randomHelper } from "../helpers";
+import { SettingService } from "./setting.service";
+import { Setting } from "../enums/setting.enum";
 
 @Injectable()
 export class MusicService {
     constructor(
         private readonly neteaseService: NeteaseService,
         private readonly singService: SingService,
+        private readonly setting: SettingService,
     ) {
     }
 
     async getSongs(limit = 10) {
-        const songs = []
-            .concat(await this.neteaseService.getSongs())
-            .concat(await this.singService.getSongs());
+        let songs = [];
+
+        if (await this.setting.enable(Setting.MXB_NETEASE_ENABLE)) {
+            songs = songs.concat(await this.neteaseService.getSongs());
+        }
+
+        if (await this.setting.enable(Setting.MXB_5SING_ENABLE)) {
+            songs = songs.concat(await this.singService.getSongs());
+        }
+
         shuffle(songs);
         return {
             total: songs.length,

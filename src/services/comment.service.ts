@@ -1,5 +1,5 @@
 import { Keystone } from "@keystonejs/keystone";
-import { Comment } from "../interfaces/comment.interface";
+import { Comment } from "../interfaces";
 import { createItem } from '@keystonejs/server-side-graphql-client';
 import { GET_COMMENT } from "../graphql/comment.gql";
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";

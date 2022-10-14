@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: mxb-server
-  name: mxb-server
+    app: api-mxb-cc
+  name: api-mxb-cc
   namespace: default
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: mxb-server
+      app: api-mxb-cc
   template:
     metadata:
       labels:
-        app: mxb-server
+        app: api-mxb-cc
     spec:
       containers:
         - env:
@@ -21,7 +21,7 @@ spec:
               value: production
           image: mxbcc/mxb.cc-server:master
           imagePullPolicy: IfNotPresent
-          name: mxb-server
+          name: api-mxb-cc
           resources: {}
           volumeMounts:
             - mountPath: /usr/src/app/src/.keystone/.env.production
@@ -36,5 +36,5 @@ spec:
             items:
               - key: .env.production
                 path: .env.production
-            name: mxb-server-configmap
+            name: api-mxb-cc-configmap
           name: volume-config

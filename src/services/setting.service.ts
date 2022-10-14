@@ -19,4 +19,9 @@ export class SettingService {
         });
         return res.data.allSettings?.[0]?.value ?? defaultValue;
     }
+
+    async enable(key: Setting): Promise<boolean> {
+        const isEnable = await this.get(key, false);
+        return !!isEnable;
+    }
 }

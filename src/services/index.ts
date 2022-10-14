@@ -7,3 +7,5 @@ export * from './sing.service';
 export * from './music.service';
 export * from './setting.service';
 export * from './resource.service';
+export * from './es.service';
+export * from './post.service';
