@@ -22,3 +22,15 @@ spec:
             pathType: ImplementationSpecific
   tls:
     - secretName: api-mxb-cc-certs
+
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: api-mxb-cc-redirectschema
+  namespace: default
+spec:
+  redirectScheme:
+    permanent: true
+    scheme: https
